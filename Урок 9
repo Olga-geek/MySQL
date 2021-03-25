@@ -7,5 +7,8 @@ insert into sample.users select shop.users.id from shop.users where shop.users.i
 commit;
 
 select * from sample.users;
+9.2
+-- Создайте представление, которое выводит название name товарной позиции из таблицы products и соответствующее название каталога name из таблицы catalogs.
+
 
 
