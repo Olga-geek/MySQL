@@ -32,4 +32,44 @@ END
 с 18:00 до 00:00 — "Добрый вечер", с 00:00 до 6:00 — "Доброй ночи".
 -------------------------------------------------------------------
 
+CREATE DEFINER=`root`@`localhost` FUNCTION `hello`() RETURNS text CHARSET utf8mb4
+    READS SQL DATA
+BEGIN
+ RETURN CASE
+      WHEN "06:00" <= CURTIME() AND CURTIME() < "12:00" THEN "Доброе утро"
+      WHEN "12:00" <= CURTIME() AND CURTIME() < "18:00" THEN "Добрый День"
+      WHEN "18:00" <= CURTIME() AND CURTIME() < "00:00" THEN "Добрый вечер"
+      ELSE "Доброй ночи"
+    END;
+END
+
+----9.2 В таблице products есть два текстовых поля: 
+name с названием товара и description с его описанием. 
+Допустимо присутствие обоих полей или одно из них. 
+Ситуация, когда оба поля принимают неопределенное значение NULL неприемлема.
+Используя триггеры, добейтесь того, чтобы одно из этих полей или оба поля были заполнены.
+При попытке присвоить полям NULL-значение необходимо отменить операцию. ---
+
+
+CREATE DEFINER=`root`@`localhost` TRIGGER `products_BEFORE_INSERT` BEFORE INSERT ON `products` FOR EACH ROW BEGIN
+	if isnull(new.`name`) + isnull(new.`description`) !=1 then
+		signal sqlstate '45000'
+        set message_text = 'need insert some valut';
+	
+	end if;
+
+
+END
+
+----при попытке сохранить вставку, ВБ выдает следующую ошибку ----
+Operation failed: There was an error while applying the SQL script to the database.
+Executing:
+INSERT INTO `shop`.`products` (`id`, `description`) VALUES ('8', NULL);
+
+ERROR 1644: 1644: need insert some valut
+SQL Statement:
+INSERT INTO `shop`.`products` (`id`, `description`) VALUES ('8', NULL)
+
+
+
 
