@@ -84,9 +84,3 @@ OK
 > get olga@mail.ru
 "olga"
 
---11.3-- Организуйте хранение категорий и товарных позиций учебной базы данных shop в СУБД MongoDB.----
-
-use shop
-db.shop.products.insert({"name": "Intel Core i3-8100", "description": "Процессор для настольных персональных компьютеров, основанных на платформе Intel.", "price": "7890.00", "catalog_id": "Процессоры", "created_at": new Date(), "updated_at": new Date()})
-db.shop.products.find()
-
